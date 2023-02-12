@@ -1,17 +1,45 @@
 
 from search import *
 
+number_of_queens = 8
 
-
-
-
-nq_problem = NQueensProblem(18)
+nq_problem = NQueensProblem(number_of_queens)
 #solution = recursive_best_first_search(nq_problem).solution()
-#solution = breadth_first_graph_search(nq_problem).solution()
-solution = best_first_graph_search(nq_problem, lambda n: nq_problem.h(n) ).solution()
+solution = breadth_first_graph_search(nq_problem).solution()
+#solution = best_first_graph_search(nq_problem, lambda n: nq_problem.h(n) ).solution()
 
 print(solution)
-exit()
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_solution(solution):
+    n = len(solution)
+    fig, ax = plt.subplots()
+    ax.set_xticks(np.arange(-0.5, n, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, n, 1), minor=True)
+    ax.set_xticks(np.arange(0.5, n, 1))
+    ax.set_yticks(np.arange(0.5, n, 1))
+    ax.set_xticklabels(np.arange(1, n + 1))
+    ax.set_yticklabels(np.arange(1, n + 1))
+    ax.grid(which='both', color='black', linestyle='-', linewidth=1)
+    for row in range(n):
+        for col in range(n):
+            if solution[row] == col:
+                ax.text(col, row, "Q", ha='center', va='center', color='red', fontsize=24)
+    ax.invert_yaxis()
+    plt.show()
+
+
+plot_solution(solution)
+
+
+
+
 
 
 from PIL import Image
@@ -42,8 +70,16 @@ def plot_NQueens(solution):
     fig.tight_layout()
     plt.show()
 
-plot_NQueens(solution)
+if number_of_queens == 8:
+    plot_NQueens(solution)
 
+'''
+while True:
+    user_input = input("Do you want graphical picture of NQueensProblem  (y/n)? ")
+    if user_input.lower() == 'y':
+        plot_NQueens(solution)
+        break
+    else:
+        exit()
 
-
-
+'''

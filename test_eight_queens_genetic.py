@@ -26,7 +26,7 @@ solution = genetic_algorithm(population, fitness, f_thres=28, gene_pool=range(8)
 print(solution)
 print(fitness(solution))
 
-
+exit(0)
 
 
 population = init_population(50000, range(8), 8)
