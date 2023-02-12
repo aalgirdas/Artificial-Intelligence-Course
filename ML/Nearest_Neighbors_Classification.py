@@ -10,7 +10,7 @@ import seaborn as sns
 from matplotlib.colors import ListedColormap
 from sklearn import neighbors, datasets
 
-n_neighbors = 15
+n_neighbors = 3
 
 # import some data to play with
 iris = datasets.load_iris()
