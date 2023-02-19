@@ -4,6 +4,11 @@ from tkinter import messagebox
 import utils
 from search import *
 
+
+cont_name = "Lithuania"  # "Lithuania" "Romania"  "Russia" "India" "Ukraine"
+switch_country_map(cont_name)
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 distances = {}
@@ -53,6 +58,10 @@ class TSPGui():
         self.root = root
         self.vars = []
         self.frame_locations = {}
+        # AL 2023-02-17
+        self.minx , self.maxx = sys.maxsize, -1 * sys.maxsize
+        self.miny , self.maxy = sys.maxsize, -1 * sys.maxsize
+
         self.calculate_canvas_size()
         self.button_text = StringVar()
         self.button_text.set("Start")
@@ -62,7 +71,10 @@ class TSPGui():
         self.frame_select_cities.grid(row=1)
         self.frame_canvas = Frame(self.root)
         self.frame_canvas.grid(row=2)
-        Label(self.root, text="Map of Romania", font="Times 13 bold").grid(row=0, columnspan=10)
+
+        self.best_cost = sys.maxsize  # AL
+
+        Label(self.root, text="Map of " + cont_name, font="Times 13 bold").grid(row=0, columnspan=10)
 
     def create_checkboxes(self, side=LEFT, anchor=W):
         """To select cities which are to be a part of Traveling Salesman Problem"""
@@ -78,7 +90,7 @@ class TSPGui():
 
             self.vars.append(var)
             column_number += 1
-            if column_number == 10:
+            if column_number == 15:
                 column_number = 0
                 row_number += 1
 
@@ -114,22 +126,29 @@ class TSPGui():
     def calculate_canvas_size(self):
         """Width and height for canvas"""
 
-        minx, maxx = sys.maxsize, -1 * sys.maxsize
-        miny, maxy = sys.maxsize, -1 * sys.maxsize
+        #minx, maxx = sys.maxsize, -1 * sys.maxsize
+        #miny, maxy = sys.maxsize, -1 * sys.maxsize
 
-        for value in romania_map.locations.values():
-            minx = min(minx, value[0])
-            maxx = max(maxx, value[0])
-            miny = min(miny, value[1])
-            maxy = max(maxy, value[1])
+        for value in maps.romania_map.locations.values():
+            self.minx = min(self.minx, value[0])
+            self.maxx = max(self.maxx, value[0])
+            self.miny = min(self.miny, value[1])
+            self.maxy = max(self.maxy, value[1])
 
         # New locations squeezed to fit inside the map of romania
-        for name, coordinates in romania_map.locations.items():
-            self.frame_locations[name] = (coordinates[0] / 1.2 - minx +
-                                          150, coordinates[1] / 1.2 - miny + 165)
+        squeez_cof = max( (self.maxx - self.minx)/1200,  (self.maxy - self.miny)/600 )
+        squeez_cofx = (self.maxx - self.minx)/1200
+        squeez_cofy =  (self.maxy - self.miny)/600
+        print("squeez_cof: " + str(squeez_cof))
+        print("squeez_cofx: " + str(squeez_cofx))
+        print("squeez_cofy: " + str(squeez_cofy))
 
-        canvas_width = maxx - minx + 200
-        canvas_height = maxy - miny + 200
+        for name, coordinates in maps.romania_map.locations.items():
+            #self.frame_locations[name] = (coordinates[0] / 1.2 - self.minx + 150, self.maxy - ( coordinates[1] / 1.2 - self.miny + 225) )
+            self.frame_locations[name] = (   (coordinates[0]  - self.minx) / squeez_cofx + 100, (self.maxy - coordinates[1] )/ squeez_cofy  + 50 )
+
+        canvas_width = (self.maxx - self.minx) / squeez_cofx + 200
+        canvas_height = (self.maxy - self.miny) / squeez_cofy + 200
 
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
@@ -137,17 +156,18 @@ class TSPGui():
     def create_canvas(self, problem):
         """creating map with cities"""
 
-        map_canvas = Canvas(self.frame_canvas, width=self.canvas_width, height=self.canvas_height)
+        map_canvas = Canvas(self.frame_canvas, width=self.canvas_width, height=self.canvas_height, bg="white")
         map_canvas.grid(row=3, columnspan=10)
         current = Node(problem.initial)
         map_canvas.delete("all")
-        self.romania_image = PhotoImage(file="../images/romania_map.png")
-        map_canvas.create_image(self.canvas_width / 2, self.canvas_height / 2,
-                                image=self.romania_image)
+
+        # self.romania_image = PhotoImage(file="../images/romania_map.png")
+        # map_canvas.create_image(self.canvas_width / 2, self.canvas_height / 2, image=self.romania_image)
+
         cities = current.state
         for city in cities:
             x = self.frame_locations[city][0]
-            y = self.frame_locations[city][1]
+            y = self.frame_locations[city][1]  # self.maxy-
             map_canvas.create_oval(x - 3, y - 3, x + 3, y + 3,
                                    fill="red", outline="red")
             map_canvas.create_text(x - 15, y - 10, text=city)
@@ -157,7 +177,7 @@ class TSPGui():
             row=2, columnspan=10)
 
         self.speed = IntVar()
-        speed_scale = Scale(self.frame_canvas, from_=500, to=1, orient=HORIZONTAL,
+        speed_scale = Scale(self.frame_canvas, from_=500, to=1, orient=HORIZONTAL,  #
                             variable=self.speed, label="Speed ----> ", showvalue=0, font="Times 11",
                             relief="sunken", cursor="gumby")
         speed_scale.grid(row=1, columnspan=5, sticky=N + S + E + W)
@@ -209,7 +229,9 @@ class TSPGui():
                 map_canvas.delete("poly")
 
                 current = next
-                self.cost.set("Cost = " + str('%0.3f' % (-1 * problem.value(current.state))))
+                prob_val = -1 * problem.value(current.state)
+                self.best_cost = min(self.best_cost, prob_val)
+                self.cost.set("Cost = " + str('%0.3f' % (prob_val)) + "     " + str('%0.0f' % self.best_cost ) )
                 points = []
                 for city in current.state:
                     points.append(self.frame_locations[city][0])
@@ -319,20 +341,21 @@ class TSPGui():
 
 if __name__ == '__main__':
     all_cities = []
-    for city in romania_map.locations.keys():
+    for city in maps.romania_map.locations.keys():
         distances[city] = {}
         all_cities.append(city)
     all_cities.sort()
 
     # distances['city1']['city2'] contains euclidean distance between their coordinates
-    for name_1, coordinates_1 in romania_map.locations.items():
-        for name_2, coordinates_2 in romania_map.locations.items():
+    for name_1, coordinates_1 in maps.romania_map.locations.items():
+        for name_2, coordinates_2 in maps.romania_map.locations.items():
             distances[name_1][name_2] = np.linalg.norm(
                 [coordinates_1[0] - coordinates_2[0], coordinates_1[1] - coordinates_2[1]])
             distances[name_2][name_1] = np.linalg.norm(
                 [coordinates_1[0] - coordinates_2[0], coordinates_1[1] - coordinates_2[1]])
 
     root = Tk()
+    root.configure(bg="white")
     root.title("Traveling Salesman Problem")
     cities_selection_panel = TSPGui(root, all_cities)
     cities_selection_panel.create_checkboxes()
