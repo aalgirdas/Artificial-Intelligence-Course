@@ -1,12 +1,12 @@
 
 from search import *
 
-number_of_queens = 8
+number_of_queens = 25
 
-nq_problem = NQueensProblem(number_of_queens)
+nq_problem = NQueensProblem(number_of_queens)  # >30 min for 30 queens
 #solution = recursive_best_first_search(nq_problem).solution()
-solution = breadth_first_graph_search(nq_problem).solution()
-#solution = best_first_graph_search(nq_problem, lambda n: nq_problem.h(n) ).solution()
+#solution = breadth_first_graph_search(nq_problem).solution()
+solution = best_first_graph_search(nq_problem, lambda n: nq_problem.h(n) ).solution()
 
 print(solution)
 

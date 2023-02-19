@@ -74,7 +74,7 @@ for both the x and y axes. The x value is calculated by dividing the difference 
  between the maximum and minimum latitudes, and then multiplying by the y resolution. Finally, the x and y values are returned as a tuple of integers.
 
 '''
-def lat_lng_to_pixel(lat, lng, country_lat_lng_dic, country, resolution=(1600, 900)):
+def lat_lng_to_pixel(lat, lng, country_lat_lng_dic, country, resolution=(1600, 900)):  # resolution=(1600, 900)
     #country = None
     #for key in country_lat_lng_dic:
     #    if lat >= country_lat_lng_dic[key]['lat_min'] and lat <= country_lat_lng_dic[key]['lat_max'] and \
@@ -124,7 +124,7 @@ def filter_by_country(data, country):
         if item.get('country') == country:
             result.append(item)
             counter += 1
-            if counter >= 160:
+            if counter >= 60:
                 break
     return result
 
@@ -327,7 +327,7 @@ def get_romania_map_string(new_edges):
             romania_map[node1] = dict()
         romania_map[node1][node2] = distance
 
-    romania_map_str = 'romania_map = UndirectedGraph(dict(\n'
+    romania_map_str = 'maps.romania_map = UndirectedGraph(dict(\n'
     for node, edges in romania_map.items():
         node = node.replace(" ", "_").replace("-", "_").replace("’", "_")
         #dest = dest.replace(" ", "_")
@@ -353,7 +353,7 @@ print(get_romania_map_string(new_edges))
 print()
 
 def get_romania_locations_string(country_data):
-    locations_string = "romania_map.locations = dict(\n"
+    locations_string = "maps.romania_map.locations = dict(\n"
     for location in country_data:
         node = location['city'].replace(" ", "_").replace("-", "_").replace("’", "_")
         locations_string += f"    {node}=({location['x']},{location['y']}),\n"

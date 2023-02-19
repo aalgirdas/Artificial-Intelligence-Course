@@ -2,12 +2,12 @@
 from search import *
 from notebook import *
 
-country = "Ukraine"  # "Lithuania" "Romania"  "Russia" "India" "Ukraine"
+country = "Russia"  # "Lithuania" "Romania"  "Russia" "India" "Ukraine"
 switch_country_map(country)
 
 romania_problem = GraphProblem(maps.romania_map_start, maps.romania_map_goal, maps.romania_map)
 
-search_method = "uniform"  # "random" "breadth_first" "best_first" "uniform" "astar"
+search_method = "best_first"  # "random" "breadth_first" "best_first" "uniform" "astar"
 
 if search_method == "random":
     solution = random_search(romania_problem, 1000).solution()
