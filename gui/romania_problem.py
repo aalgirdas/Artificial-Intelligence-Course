@@ -1,17 +1,13 @@
 from copy import deepcopy
 from tkinter import *
+import os.path
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-#from search import *
-
-from search import romania_map, Node, deque, GraphProblem
-
-
-from utils import *
-
-
+from search import *
 from utils import PriorityQueue
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 
 root = None
 city_coord = {}

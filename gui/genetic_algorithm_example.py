@@ -9,12 +9,14 @@
 # Displays the first few individuals of the current generation
 
 import os.path
+import sys
 from tkinter import *
 from tkinter import ttk
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import search
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 
 LARGE_FONT = ('Verdana', 12)
 EXTRA_LARGE_FONT = ('Consolas', 36, 'bold')
