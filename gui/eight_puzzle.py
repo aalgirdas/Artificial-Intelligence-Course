@@ -1,13 +1,12 @@
 import os.path
 import random
+import sys
 import time
 from functools import partial
 from tkinter import *
 
-from search import astar_search, EightPuzzle, recursive_best_first_search, depth_first_tree_search, breadth_first_tree_search, depth_first_graph_search
-#from search import *
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from search import *
 
 root = Tk()
 

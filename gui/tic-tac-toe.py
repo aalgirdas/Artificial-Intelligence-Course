@@ -1,11 +1,13 @@
 import os.path
+import sys
 from tkinter import *
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from games import minmax_decision, alpha_beta_player, random_player, TicTacToe
 # "gen_state" can be used to generate a game state to apply the algorithm
 from tests.test_games import gen_state
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 
 ttt = TicTacToe()
 root = None
@@ -31,7 +33,7 @@ def create_frames(root):
     create_buttons(frame2)
     create_buttons(frame3)
     buttonExit = Button(
-        frame4, height=1, width=2,
+        frame4, height=1, width=4,
         text="Exit",
         command=lambda: exit_game(root))
     buttonExit.pack(side=LEFT)
@@ -47,7 +49,7 @@ def create_frames(root):
         for y in x.winfo_children():
             buttons_in_frame.append(y)
         buttons.append(buttons_in_frame)
-    buttonReset = Button(frame4, height=1, width=2,
+    buttonReset = Button(frame4, height=1, width=4,
                          text="Reset", command=lambda: reset_game())
     buttonReset.pack(side=LEFT)
 
